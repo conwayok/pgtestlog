@@ -200,6 +200,13 @@ func (d *Recorder) GetLogs(ctx context.Context, db DB, tableNamesIn []string) ([
 	return results, nil
 }
 
+func (d *Recorder) ClearLogs(ctx context.Context, db DB) error {
+	sql := "TRUNCATE TABLE " + d.changeLogTableName
+
+	_, err := db.Exec(ctx, sql)
+	return err
+}
+
 func RenderAscii(logs []Log) string {
 	if len(logs) == 0 {
 		return ""

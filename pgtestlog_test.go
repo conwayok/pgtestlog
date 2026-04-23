@@ -201,6 +201,30 @@ func TestRecorder(t *testing.T) {
 			},
 		},
 		{
+			name: "test clear logs",
+			testFunc: func(t *testing.T, db DB, recorder *Recorder) {
+				_, err := db.Exec(t.Context(), createSimpleTableSQL)
+				require.Nil(t, err)
+
+				err = recorder.Setup(t.Context(), db)
+				require.Nil(t, err)
+
+				_, err = db.Exec(t.Context(), "INSERT INTO simple_table (id, value) VALUES ($1, $2)", "1", "test")
+				require.Nil(t, err)
+
+				logs, err := recorder.GetLogs(t.Context(), db, []string{"simple_table"})
+				require.Nil(t, err)
+				require.NotEmpty(t, logs)
+
+				err = recorder.ClearLogs(t.Context(), db)
+				require.Nil(t, err)
+
+				logs, err = recorder.GetLogs(t.Context(), db, []string{"simple_table"})
+				require.Nil(t, err)
+				require.Empty(t, logs)
+			},
+		},
+		{
 			name: "test complex types and multiple operations",
 			testFunc: func(t *testing.T, db DB, recorder *Recorder) {
 				_, err := db.Exec(t.Context(), createComplexTableSQL)

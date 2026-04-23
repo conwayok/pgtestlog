@@ -92,6 +92,11 @@ func main() {
 	fmt.Println("Database changes captured:")
 	output := pgtestlog.RenderAscii(logs)
 	fmt.Println(output)
+
+	err = recorder.ClearLogs(ctx, conn)
+	if err != nil {
+		log.Fatalf("Failed to clear logs: %v\n", err)
+	}
 }
 ```
 
